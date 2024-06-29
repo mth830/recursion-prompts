@@ -122,7 +122,7 @@ let modulo = function (x, y) {
   if (x < 0) x = -x;
   if (y < 0) y = -y;
   if (sign > 0) modulo(x - y, y);
-  return -modulo(x - y, x)
+  return -modulo(x - y, y)
 };
 
 // 12. Write a function that multiplies two numbers without using the * operator or
@@ -189,6 +189,8 @@ let reverseArr = function (array) {
 // buildList(0,5) // [0,0,0,0,0]
 // buildList(7,3) // [7,7,7]
 let buildList = function (value, length) {
+  if (length === 0) return [];
+  return [value].concat(buildList(value, length - 1));
 };
 
 // 19. Implement FizzBuzz. Given integer n, return an array of the string representations of 1 to n.
@@ -197,17 +199,27 @@ let buildList = function (value, length) {
 // For numbers which are multiples of both three and five, output “FizzBuzz” instead of the number.
 // fizzBuzz(5) // ['1','2','Fizz','4','Buzz']
 let fizzBuzz = function (n) {
+  let val = n.toString();
+  if (n % 15 === 0) val = 'FizzBuzz';
+  else if (n % 5 === 0) val = 'Buzz';
+  else if (n % 3 === 0) val = 'Fizz';
+  if (n === 1) return [val];
+  return fizzBuzz(n - 1).concat(val);
 };
 
 // 20. Count the occurrence of a value in a list.
 // countOccurrence([2,7,4,4,1,4], 4) // 3
 // countOccurrence([2,'banana',4,4,1,'banana'], 'banana') // 2
 let countOccurrence = function (array, value) {
+  if (array.length === 0) return 0;
+  return ~~(value === array[0]) + countOccurrence(array.slice(1), value);
 };
 
 // 21. Write a recursive version of map.
 // rMap([1,2,3], timesTwo); // [2,4,6]
 let rMap = function (array, callback) {
+  if (array.length === 0) return [];
+  return [callback(array[0])].concat(rMap(array.slice(1), callback));
 };
 
 // 22. Write a function that counts the number of times a key occurs in an object.
@@ -235,6 +247,7 @@ let replaceKeysInObj = function (obj, oldKey, newKey) {
 // fibonacci(5); // [0,1,1,2,3,5]
 // Note: The 0 is not counted.
 let fibonacci = function (n) {
+
 };
 
 // 26. Return the Fibonacci number located at index n of the Fibonacci sequence.
@@ -243,17 +256,26 @@ let fibonacci = function (n) {
 // nthFibo(7); // 13
 // nthFibo(3); // 2
 let nthFibo = function (n) {
+  if (n < 0) return null;
+  if (n < 2) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
 };
 
 // 27. Given an array of words, return a new array containing each word capitalized.
 // let words = ['i', 'am', 'learning', 'recursion'];
 // capitalizedWords(words); // ['I', 'AM', 'LEARNING', 'RECURSION']
 let capitalizeWords = function (array) {
+  if (array.length === 0) return [];
+  return [array[0].toUpperCase()].concat(capitalizeWords(array.slice(1)));
 };
 
 // 28. Given an array of strings, capitalize the first letter of each index.
 // capitalizeFirst(['car','poop','banana']); // ['Car','Poop','Banana']
 let capitalizeFirst = function (array) {
+  if (array.length === 0) return [];
+  let firstWord = array[0];
+  firstWord = firstWord[0].toUpperCase() + firstWord.slice(1)
+  return [firstWord].concat(capitalizeFirst(array.slice(1)));
 };
 
 // 29. Return the sum of all even numbers in an object containing nested objects.
@@ -276,6 +298,12 @@ let flatten = function (array) {
 // 31. Given a string, return an object containing tallies of each letter.
 // letterTally('potato'); // {p:1, o:2, t:2, a:1}
 let letterTally = function (str, obj) {
+  if (str.length === 0) return;
+  if (obj === undefined) obj = {};
+  const firstLetter = str[0];
+  obj[firstLetter] = (obj[firstLetter] || 0) + 1;
+  letterTally(str.slice(1), obj);
+  return obj;
 };
 
 // 32. Eliminate consecutive duplicates in a list. If the list contains repeated
@@ -284,6 +312,10 @@ let letterTally = function (str, obj) {
 // compress([1,2,2,3,4,4,5,5,5]) // [1,2,3,4,5]
 // compress([1,2,2,3,4,4,2,5,5,5,4,4]) // [1,2,3,4,2,5,4]
 let compress = function (list) {
+  if (list.length === 0) return [];
+  else if(list.length===1) return list;
+  else if(list[0]===list[1]) return compress(list.slice(1))
+  return [list[0]].concat(compress(list.slice(1)));
 };
 
 // 33. Augment every element in a list with a new value where each element is an array
