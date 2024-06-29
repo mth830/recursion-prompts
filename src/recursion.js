@@ -114,15 +114,16 @@ let palindrome = function (string) {
 // modulo(17,5) // 2
 // modulo(22,6) // 4
 let modulo = function (x, y) {
-  if (x < y) return x;
   if (y === 0) return NaN;
   if (x === 0) return 0;
   let sign = 1;
   if ((x < 0 && y > 0) || (x > 0 && y < 0)) sign = -1;
   if (x < 0) x = -x;
   if (y < 0) y = -y;
-  if (sign > 0) modulo(x - y, y);
-  return -modulo(x - y, y)
+  if (x < y && sign > 0) return x;
+  else if (x < y && sign < 0) return -x;
+  if (sign > 0) return modulo(x - y, y);
+  return -(modulo(x - y, y))
 };
 
 // 12. Write a function that multiplies two numbers without using the * operator or
@@ -161,6 +162,15 @@ let divide = function (x, y) {
 // http://www.cse.wustl.edu/~kjg/cse131/Notes/Recursion/recursion.html
 // https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm
 let gcd = function (x, y) {
+  if (x < 0 || y < 0) return null;
+  if (x < y) [x, y] = [y, x];
+  let sign = 1;
+  if (x < 0) sign = -1;
+  x = Math.abs(x);
+  y = Math.abs(y);
+  if (x === 0) return y;
+  if (y === 0) return x;
+  return sign * gcd(Math.floor(x / y), x % y);
 };
 
 // 15. Write a function that compares each character of two strings and returns true if
@@ -227,6 +237,13 @@ let rMap = function (array, callback) {
 // countKeysInObj(obj, 'r') // 1
 // countKeysInObj(obj, 'e') // 2
 let countKeysInObj = function (obj, key) {
+  let count = 0;
+  for (currKey in obj) {
+    if (key === currKey) count++;
+    if (typeof obj[currKey] === 'object')
+      count += countKeysInObj(obj[currKey], key);
+  }
+  return count;
 };
 
 // 23. Write a function that counts the number of times a value occurs in an object.
@@ -234,6 +251,13 @@ let countKeysInObj = function (obj, key) {
 // countValuesInObj(obj, 'r') // 2
 // countValuesInObj(obj, 'e') // 1
 let countValuesInObj = function (obj, value) {
+  let count = 0;
+  for (elem of Object.values(obj)) {
+    if (typeof elem === 'object')
+      count += countValuesInObj(elem, value);
+    else if (elem === value) count++;
+  }
+  return count;
 };
 
 // 24. Find all keys in an object (and nested objects) by a provided name and rename
@@ -292,6 +316,17 @@ let capitalizeFirst = function (array) {
 // };
 // nestedEvenSum(obj1); // 10
 let nestedEvenSum = function (obj) {
+  let count = 0;
+  for (key in obj) {
+    let elem  = obj[key];
+    if (typeof elem === 'object') {
+      count += nestedEvenSum(elem);
+    } else if (typeof elem === 'number' && elem % 2 === 0) {
+      //console.log(elem);
+      count += elem;
+    }
+  }
+  return count;
 };
 
 // 30. Flatten an array containing nested arrays.
