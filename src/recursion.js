@@ -57,10 +57,10 @@ let sumBelow = function (n) {
 // range(2,9); // [3,4,5,6,7,8]
 
 let range = function (x, y) {
-  if(x===y-1||x===y) return [];
-  if(x===y+1) return [];
-  if(x>y) return ([x-1]).concat(range(x-1,y))
-  return ([x+1]).concat(range(x+1,y));
+  if (x === y - 1 || x === y) return [];
+  if (x === y + 1) return [];
+  if (x > y) return ([x - 1]).concat(range(x - 1, y))
+  return ([x + 1]).concat(range(x + 1, y));
 };
 
 // 7. Compute the exponent of a number.
@@ -84,17 +84,17 @@ let exponent = function (base, exp) {
 // powerOfTwo(16); // true
 // powerOfTwo(10); // false
 let powerOfTwo = function (n) {
-  if(n<1) return false;
-  if(n ===1 ) return true;
-  return powerOfTwo(n/2);
+  if (n < 1) return false;
+  if (n === 1) return true;
+  return powerOfTwo(n / 2);
 
 };
 
 // 9. Write a function that reverses a string.
 // reverse("hello"); // olleh 
 let reverse = function (string) {
-  if(string.length===0) return "";
-  return string[string.length-1]+reverse(string.slice(0,string.length-1));
+  if (string.length === 0) return "";
+  return string[string.length - 1] + reverse(string.slice(0, string.length - 1));
 };
 
 // 10. Write a function that determines if a string is a palindrome.
@@ -102,10 +102,10 @@ let reverse = function (string) {
 // palindrome("rotor") // true
 // palindrome("wow") // true
 let palindrome = function (string) {
-  string = string.replace(" ","");
-  string=string.toLowerCase();
-  if(string.length===1||string.length===0) return  true;
-  return string[0]===string[string.length-1]&&palindrome(string.slice(1,string.length-1));
+  string = string.replace(" ", "");
+  string = string.toLowerCase();
+  if (string.length === 1 || string.length === 0) return true;
+  return string[0] === string[string.length - 1] && palindrome(string.slice(1, string.length - 1));
 };
 
 // 11. Write a function that returns the remainder of x divided by y without using the
@@ -114,18 +114,45 @@ let palindrome = function (string) {
 // modulo(17,5) // 2
 // modulo(22,6) // 4
 let modulo = function (x, y) {
-  if(x<y) return x;
-  return modulo(x-y,y);
+  if (x < y) return x;
+  if (y === 0) return NaN;
+  if (x === 0) return 0;
+  let sign = 1;
+  if ((x < 0 && y > 0) || (x > 0 && y < 0)) sign = -1;
+  if (x < 0) x = -x;
+  if (y < 0) y = -y;
+  if (sign > 0) modulo(x - y, y);
+  return -modulo(x - y, x)
 };
 
 // 12. Write a function that multiplies two numbers without using the * operator or
 // Math methods.
 let multiply = function (x, y) {
+  if (!x || !y) return 0;
+  if (y === 1) return x;
+  if (x === 1) return y;
+  let sign = 1;
+  if ((x < 0 && y > 0) || (x > 0 && y < 0)) sign = -1;
+  if (x < 0) x = -x;
+  if (y < 0) y = -y;
+  if (sign > 0) return (x + multiply(x, y - 1));
+  return -(x + multiply(x, y - 1));
+
 };
 
 // 13. Write a function that divides two numbers without using the / operator or
 // Math methods to arrive at an approximate quotient (ignore decimal endings).
+//1 1 1 1 1
 let divide = function (x, y) {
+  if (x === 0) return 0;
+  if (y === 0) return NaN;
+  let sign = 1;
+  if (x * y < 1) sign = -1;
+  if (x < 0) x = -x;
+  if (y < 0) y = -y;
+  if (x < y) return 0;
+  if (sign > 1) return 1 + divide(x - y, y);
+  return - (1 + divide(x - y, y));
 };
 
 // 14. Find the greatest common divisor (gcd) of two positive numbers. The GCD of two
@@ -141,15 +168,21 @@ let gcd = function (x, y) {
 // compareStr('house', 'houses') // false
 // compareStr('tomato', 'tomato') // true
 let compareStr = function (str1, str2) {
+  if (str1.length === 0 && str2.length === 0) return true;
+  return str1[0] === str2[0] && compareStr(str1.slice(1), str2.slice(1));
 };
 
 // 16. Write a function that accepts a string and creates an array where each letter
 // occupies an index of the array.
 let createArray = function (str) {
+  if (str.length === 0) return [];
+  return [str[0]].concat(createArray(str.slice(1)));
 };
 
 // 17. Reverse the order of an array
 let reverseArr = function (array) {
+  if (array.length === 0) return [];
+  return [array[array.length - 1]].concat(reverseArr(array.slice(0, array.length - 1)));
 };
 
 // 18. Create a new array with a given value and length.
