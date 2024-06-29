@@ -144,14 +144,14 @@ let multiply = function (x, y) {
 // Math methods to arrive at an approximate quotient (ignore decimal endings).
 //1 1 1 1 1
 let divide = function (x, y) {
-  if (x === 0) return 0;
   if (y === 0) return NaN;
+  if (x === 0) return 0;
   let sign = 1;
-  if (x * y < 1) sign = -1;
+  if ((x > 0 && y < 0) || (x < 0 && y > 0)) sign = -1;
   if (x < 0) x = -x;
   if (y < 0) y = -y;
   if (x < y) return 0;
-  if (sign > 1) return 1 + divide(x - y, y);
+  if (sign > 0) return 1 + divide(x - y, y);
   return - (1 + divide(x - y, y));
 };
 
@@ -247,7 +247,11 @@ let replaceKeysInObj = function (obj, oldKey, newKey) {
 // fibonacci(5); // [0,1,1,2,3,5]
 // Note: The 0 is not counted.
 let fibonacci = function (n) {
-
+  if (n < 1) return null;
+  if (n === 1) return [0, 1];
+  let prev = fibonacci(n - 1);
+  let curr = prev[prev.length - 1] + prev[prev.length - 2];
+  return prev.concat(curr);
 };
 
 // 26. Return the Fibonacci number located at index n of the Fibonacci sequence.
@@ -258,7 +262,7 @@ let fibonacci = function (n) {
 let nthFibo = function (n) {
   if (n < 0) return null;
   if (n < 2) return n;
-  return fibonacci(n - 1) + fibonacci(n - 2);
+  return nthFibo(n - 1) + nthFibo(n - 2);
 };
 
 // 27. Given an array of words, return a new array containing each word capitalized.
@@ -293,6 +297,15 @@ let nestedEvenSum = function (obj) {
 // 30. Flatten an array containing nested arrays.
 // flatten([1,[2],[3,[[4]]],5]); // [1,2,3,4,5]
 let flatten = function (array) {
+  let result = [];
+  for (elem of array) {
+    if (Array.isArray(elem)) {
+      result = result.concat(flatten(elem));
+    } else {
+      result = result.concat(elem);
+    }
+  }
+  return result;
 };
 
 // 31. Given a string, return an object containing tallies of each letter.
@@ -313,8 +326,8 @@ let letterTally = function (str, obj) {
 // compress([1,2,2,3,4,4,2,5,5,5,4,4]) // [1,2,3,4,2,5,4]
 let compress = function (list) {
   if (list.length === 0) return [];
-  else if(list.length===1) return list;
-  else if(list[0]===list[1]) return compress(list.slice(1))
+  else if (list.length === 1) return list;
+  else if (list[0] === list[1]) return compress(list.slice(1))
   return [list[0]].concat(compress(list.slice(1)));
 };
 
@@ -322,12 +335,17 @@ let compress = function (list) {
 // itself.
 // augmentElements([[],[3],[7]], 5); // [[5],[3,5],[7,5]]
 let augmentElements = function (array, aug) {
+  if (array.length === 0) return [];
+  return [array[0].concat([aug])].concat(augmentElements(array.slice(1), aug));
 };
 
 // 34. Reduce a series of zeroes to a single 0.
 // minimizeZeroes([2,0,0,0,1,4]) // [2,0,1,4]
 // minimizeZeroes([2,0,0,0,1,0,0,4]) // [2,0,1,0,4]
 let minimizeZeroes = function (array) {
+  if (array.length <= 1) return array;
+  if (array[0] === 0 && array[1] === 0) return minimizeZeroes(array.slice(1));
+  return [array[0]].concat(minimizeZeroes(array.slice(1)));
 };
 
 // 35. Alternate the numbers in an array between positive and negative regardless of
@@ -335,12 +353,22 @@ let minimizeZeroes = function (array) {
 // alternateSign([2,7,8,3,1,4]) // [2,-7,8,-3,1,-4]
 // alternateSign([-2,-7,8,3,-1,4]) // [2,-7,8,-3,1,-4]
 let alternateSign = function (array) {
+  /* if (array.length === 0) return [];
+   let first = array[0];
+   if (array.length % 2 === 0) first = Math.abs(first);
+   else first = -Math.abs(first)
+   return[first].concat(alternateSign(array.slice(1)));*/
 };
 
 // 36. Given a string, return a string with digits converted to their word equivalent.
 // Assume all numbers are single digits (less than 10).
 // numToText("I have 5 dogs and 6 ponies"); // "I have five dogs and six ponies"
 let numToText = function (str) {
+  let numbers = { 0: 'zero', 1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten' };
+  if (str.length === 0) return "";
+  let letter = str[0];
+  if (letter in numbers) letter = numbers[letter];
+  return letter + numToText(str.slice(1));
 };
 
 
@@ -355,6 +383,13 @@ let tagCount = function (tag, node) {
 // binarySearch(array, 5) // 5
 // https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/binary-search
 let binarySearch = function (array, target, min, max) {
+  if (min === undefined) min = 0;
+  if (max === undefined) max = array.length - 1;
+  if (min > max) return null;
+  let middle = Math.floor((max - min) / 2) + min;
+  if (array[middle] === target) return middle;
+  else if (array[middle] < target) return binarySearch(array, target, middle + 1, max)
+  return binarySearch(array, target, min, middle - 1);
 };
 
 // 39. Write a merge sort function.
