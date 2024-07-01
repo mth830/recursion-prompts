@@ -120,8 +120,8 @@ let modulo = function (x, y) {
   if (x < 0) sign = -1;
   if (x < 0) x = -x;
   if (y < 0) y = -y;
-  if( sign >0 && x<y) return x;
-  else if ( sign <0 && x<y) return -x;
+  if (sign > 0 && x < y) return x;
+  else if (sign < 0 && x < y) return -x;
   if (sign >= 0) return modulo(x - y, y);
   else return -(modulo(x, y));
 };
@@ -269,8 +269,8 @@ let replaceKeysInObj = function (obj, oldKey, newKey) {
       delete obj[oldKey]
     }
     if (typeof obj[key] === 'object') {
-      obj[key]=
-      replaceKeysInObj(obj[key], oldKey, newKey);
+      obj[key] =
+        replaceKeysInObj(obj[key], oldKey, newKey);
     }
   } return obj;
 };
@@ -397,12 +397,14 @@ let minimizeZeroes = function (array) {
 // their original sign. The first number in the index always needs to be positive.
 // alternateSign([2,7,8,3,1,4]) // [2,-7,8,-3,1,-4]
 // alternateSign([-2,-7,8,3,-1,4]) // [2,-7,8,-3,1,-4]
+
+
 let alternateSign = function (array) {
-  /* if (array.length === 0) return [];
-   let first = array[0];
-   if (array.length % 2 === 0) first = Math.abs(first);
-   else first = -Math.abs(first)
-   return[first].concat(alternateSign(array.slice(1)));*/
+  if (array.length === 0) return [];
+  if(array.length===1) return [Math.abs(array[0])];
+  let first = Math.abs(array[0]);
+  let second = -Math.abs(array[1]);
+  return[first].concat(second).concat(alternateSign(array.slice(2)));
 };
 
 // 36. Given a string, return a string with digits converted to their word equivalent.
@@ -421,11 +423,11 @@ let numToText = function (str) {
 
 // 37. Return the number of times a tag occurs in the DOM.
 let tagCount = function (tag, node) {
-  let count =0;
-  if(!node) node = document;
-  if(node.tagName === tag.toUpperCase()) count++;
-  for(const child of node.children){
-    count+=tagCount(tag,child);
+  let count = 0;
+  if (!node) node = document;
+  if (node.tagName === tag.toUpperCase()) count++;
+  for (const child of node.children) {
+    count += tagCount(tag, child);
   }
   return count;
 };
@@ -448,6 +450,26 @@ let binarySearch = function (array, target, min, max) {
 // mergeSort([34,7,23,32,5,62]) // [5,7,23,32,34,62]
 // https://www.khanacademy.org/computing/computer-science/algorithms/merge-sort/a/divide-and-conquer-algorithms
 let mergeSort = function (array) {
+  if (array.length <= 1) return array;
+  //split into smallest possible halves
+  let midPoint = Math.floor(array.length / 2);
+  let left = mergeSort(array.slice(0, midPoint));
+  let right = mergeSort(array.slice(midPoint));
+  //merge half one at a time based on smallest
+  let p1 = 0;
+  let p2 = 0;
+  let result = [];
+  while (p1 < left.length && p2 < right.length) {
+    if (left[p1] < right[p2]) {
+      result.push(left[p1])
+      p1++;
+    } else {
+      result.push(right[p2])
+      p2++;
+    }
+  }
+  result = result.concat(left.slice(p1)).concat(right.slice(p2));
+  return result;
 };
 
 // 40. Deeply clone objects and arrays.
@@ -456,4 +478,15 @@ let mergeSort = function (array) {
 // console.log(obj2); // {a:1,b:{bb:{bbb:2}},c:3}
 // obj1 === obj2 // false
 let clone = function (input) {
+  let obj = {};
+  if (Array.isArray(input)) obj = [];
+  for (const key in input) {
+    let val = input[key]
+    if (typeof val === 'object') {
+      obj[key] = clone(val);
+    } else {
+      obj[key] = val;
+    }
+  }
+  return obj;
 };
