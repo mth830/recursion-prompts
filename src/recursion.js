@@ -117,13 +117,13 @@ let modulo = function (x, y) {
   if (y === 0) return NaN;
   if (x === 0) return 0;
   let sign = 1;
-  if ((x < 0 && y > 0) || (x > 0 && y < 0)) sign = -1;
+  if (x < 0) sign = -1;
   if (x < 0) x = -x;
   if (y < 0) y = -y;
-  if (x < y && sign > 0) return x;
-  else if (x < y && sign < 0) return -x;
-  if (sign > 0) return modulo(x - y, y);
-  return -(modulo(x - y, y))
+  if( sign >0 && x<y) return x;
+  else if ( sign <0 && x<y) return -x;
+  if (sign >= 0) return modulo(x - y, y);
+  else return -(modulo(x, y));
 };
 
 // 12. Write a function that multiplies two numbers without using the * operator or
@@ -170,7 +170,7 @@ let gcd = function (x, y) {
   y = Math.abs(y);
   if (x === 0) return y;
   if (y === 0) return x;
-  return sign * gcd(Math.floor(x / y), x % y);
+  return sign * gcd(Math.floor(y), x % y);
 };
 
 // 15. Write a function that compares each character of two strings and returns true if
@@ -421,6 +421,13 @@ let numToText = function (str) {
 
 // 37. Return the number of times a tag occurs in the DOM.
 let tagCount = function (tag, node) {
+  let count =0;
+  if(!node) node = document;
+  if(node.tagName === tag.toUpperCase()) count++;
+  for(const child of node.children){
+    count+=tagCount(tag,child);
+  }
+  return count;
 };
 
 // 38. Write a function for binary search.
